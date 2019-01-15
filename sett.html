@@ -1,0 +1,193 @@
+
+<!DOCTYPE html>
+<head>
+	<meta charset="utf-8">
+		<meta name="description" content="">
+	 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	 	<script src="jquery/1.12.0/jquery.min.js"></script>
+	 	<link rel="stylesheet" href="bootstrap/3.3.6/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="css/font-awesome.css">
+		<link rel="shortcut icon" href="css/" type="image/x-icon">
+		<link rel="stylesheet" type="text/css" href="css/morris.css">
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+		<script type="text/javascript" src="js/md5/md5.min.js"></script>
+		<script src="bootstrap/3.3.6/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="js/raphael-2.1.0.min.js"></script>
+		<script type="text/javascript" src="js/morris.js"></script>
+		<!-- include cookie functions and logout function-->
+		<script type="text/javascript" src="js/main_function.js"></script>
+		<title>Prest Online v1.0.0</title>
+</head>
+<body style="margin:auto;" id="main">
+	<div class="main-header" style="max-width: 350px;text-align: center;margin: auto;padding-top: 40px;">
+			<p style="font-size: 10px;text-align: right; margin-right: 0px;margin-bottom: -21px;">v1.0.0</p>
+			<h2 style="margin-bottom: 2px;">Prest Online - Settings</h2>
+			<p style="font-size: 12.5px;"></i></p>
+			<h5 class="sub_head" style="text-decoration: underline;">Change Settings</h5>
+		</div>
+		<script type="text/javascript">
+		// $(document).ready(function(){
+
+			// check whether there is cookie session
+			if (!getCookie('token')){
+					  		// navigation
+				window.location.replace("index.html");
+
+							
+			}
+
+			// check password match func
+			function Check(){
+					
+					// check 
+					$(document).ready(function(){
+
+						// get values into var
+						var pass = $('input[name="nps"]').val();
+						var upass = $('input[name="rps"]').val();
+
+						// validate passwords
+						if (pass !== upass){
+							$('.res').html("<p style='color:red;padding:10px;font-size:12px;'><i>Passwords do not match !!!</i></p>");
+										
+							// e.preventDefault();
+
+						} else {
+
+							$('.res').html('');
+
+						}
+					});
+				}
+			
+				  // load side nav
+			  $(function(){
+			  	$('#main .side-cont').load('structure/side.html');
+			  });
+
+			  // modify user details
+			$(document).ready(function(){
+				$('.user-details').html('Pharmacy<i> :'+getCookie('pharmacy')+', User : '+getCookie('fullname')+'</i>');
+			});
+
+		// });
+			// get cookie information 
+			$(document).ready(function(){
+				$('input[name="fn"]').val(getCookie('fullname'));
+				$('input[name="ph"]').val(getCookie('pharmacy'));
+				$('input[name="ab"]').val(getCookie('abbrev'));
+				$('input[name="cn"]').val(getCookie('contact'));
+				$('input[name="em"]').val(getCookie('email'));
+				$('input[name="ad"]').val(getCookie('address'));
+			});	
+
+	</script>
+	<div class="container" style="max-width: 650px;padding:30px; ">
+		<div class="side-cont">
+			
+		</div>
+		<form method="post" class="sett_form" style="padding-top: 20px;">
+
+			<label> <h4><i class="fa fa-user" style="display: inline-block;"></i> Personnal </h4></label>
+			
+			<div class="form-group">
+				<label><i>Fullname</i></label>
+				<input  type="text" name="fn" placeholder="Enter Fullname" class="form-control" value="" required>
+			</div>
+			<br>
+			<label><h4><i class="fa fa-building" ></i> Business</h4></label><br>
+			<div class="form-group" style="width: 49.5%;display: inline-block;">
+				<label><i>Email</i></label>
+				<input  type="email" name="em" placeholder="Enter Email" class="form-control" value="" required>
+			</div>
+			<div class="form-group" style="width: 49.5%;display: inline-block;">
+				<label><i>Contact</i></label>
+				<input  type="text" name="cn" placeholder="Enter Contact" class="form-control" value="" required>
+			</div>
+			<div class="form-group" style="width: 49.5%;display: inline-block;">
+				<label><i>Pharmacy</i></label>
+				<input  type="text" name="ph" placeholder="Enter Pharmacy" class="form-control" value="" required>
+			</div>
+			<div class="form-group" style="width: 49.5%;display: inline-block;">
+				<label><i>Address</i></label>
+				<input  type="text" name="ad" placeholder="Enter Address" class="form-control" value="" required>
+			</div>
+			<br><br>
+			<label><h4><i class="fa fa-lock" style="display: inline-block;"></i> Security</h4></label><br>
+			<div class="form-group" >
+				<label><i> Password</i></label>
+				<input  type="password" name="ps" placeholder="Enter Password" class="form-control" required>
+			</div>
+			<div class="form-group" style="width: 49.5%;display: inline-block;">
+				<label><i>New Password</i></label>
+				<input  type="password" name="nps" placeholder="Enter Password" class="form-control" required>
+			</div>
+			<div class="form-group" style="width: 49.5%;display: inline-block;">
+				<label><i>Re-enter Password</i></label>
+				<input  type="password" name="rps" onkeyup="Check()" placeholder="Enter Password" class="form-control" required>
+			</div>
+			<div class="res"></div>
+			<div style="margin:auto;width:50px; padding-top: 20px;">
+				<button class="btn btn-success submit">Submit</button>
+			</div>
+		</form>						
+
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+
+			$('.sett_form').on('submit',function(e){
+
+				e.preventDefault();
+
+				// get data
+				var fn = $('input[name="fn"]').val();
+				var em = $('input[name="em"]').val();
+				var cn = $('input[name="cn"]').val();
+				var ad = $('input[name="ad"]').val();
+				var ph = $('input[name="ph"]').val();
+				var ps = md5($('input[name="ps"]').val());
+				var nps = md5($('input[name="nps"]').val());
+				var rps = md5($('input[name="rps"]').val());
+
+					$.ajax({
+						url:'api/mod_sett.php',
+						type:'POST',
+						data:'submit='+''+'&fn='+fn+'&em='+em+'&cn='+cn+'&ad='+ad+'&ph='+ph+'&ps='+ps+'&nps='+nps,
+						success:function(obj){
+
+							if (obj){
+								
+								if (obj.status == '1'){
+
+										alert(obj.res);
+
+										// Set timeout for redirection
+										setTimeout(loOut, 1800);
+
+										// redirect function
+										function loOut(){
+
+											// 
+											$('.logout').click();
+
+										}
+										
+
+								} else if (obj.status == '0'){
+
+										alert(obj.res);
+
+								}
+							}
+						}
+					});
+
+			});
+
+		});	
+
+	</script>
+</body>
+</html>

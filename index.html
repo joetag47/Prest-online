@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="description" content="">
+	 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	 	<script src="jquery/1.12.0/jquery.min.js"></script>
+	 	<link rel="stylesheet" href="bootstrap/3.3.6/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="css/font-awesome.css">
+		<link rel="shortcut icon" href="css/" type="image/x-icon">
+		<link rel="stylesheet" type="text/css" href="css/morris.css">
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+		<script type="text/javascript" src="js/md5/md5.min.js"></script>
+		<script src="bootstrap/3.3.6/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="js/raphael-2.1.0.min.js"></script>
+		<script type="text/javascript" src="js/morris.js"></script>
+		<title>Prest Online v1.0.0</title>
+	</head>
+<body style="margin:auto;">
+		<script type="text/javascript">
+			// cookie for user session
+			   function setCookie(cname, cvalue, exdays) {
+			    var d = new Date();
+			    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+			    var expires = "expires="+d.toUTCString();
+			    document.cookie = cname + "=" + cvalue + "; " + expires;
+			  }
+
+			  // get cookie
+			  function getCookie(cname) {
+			      var name = cname + "=";
+			      var ca = document.cookie.split(';');
+			      for(var i=0; i<ca.length; i++) {
+			          var c = ca[i];
+			          while (c.charAt(0)==' ') c = c.substring(1);
+			          if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+			      }
+			      return "";
+			  }
+
+			  // delete cookie
+			  function deleteCookie(cname){
+			     var d = 'Thu, 01 Jan 1970 00:00:00 UTC';
+			     var expires = "expires="+d;
+			     document.cookie = cname + "=;" + expires;
+			  }
+
+
+			 // check whether there is cookie session
+			  if (getCookie('token')){
+	
+			  		// navigation
+					window.location.replace("main.html");	
+
+			  }
+
+		</script>
+		<div class="login-header" style="width: 300px;text-align: center;margin: auto;padding-top: 100px;">
+			<p style="font-size: 10px;text-align: right; margin-right: 70px;margin-bottom: -21px;">v1.0.0</p>
+			<h2 style="margin-bottom: 2px;">Prest Online </h2>
+			<p style="font-size: 12.5px;"><i>enter details to login.</i></p>
+		</div>
+		<div class="container" style="padding: 10px;padding-top: 30px;max-width: 650px;">
+			<!-- login form -->
+			<form class="login-form" method="post">
+				<div class="form-reponse">
+					
+				</div>	
+				<div class="form-group">
+					<input type="email" class="form-control" name="em" placeholder="Enter Email" required>
+				</div>
+				<div class="form-group">
+					<input type="password" class="form-control" name="ps" placeholder="Enter Password" required>
+				</div>
+				<div class="form-group">
+					<input type="submit" class="form-control btn btn-success" name="login" value="Login">
+				</div>
+				<div style="font-size: 12px;" class="pull-right">
+					<a href="forgot.html">Forgot Password</a>
+				</div>
+				<div style="font-size: 12px;">
+					<p>Don't have an Account? <a href="register.html">Sign Up</a></p>
+				</div>
+				<!-- <br> -->
+				
+			</form>
+		</div>
+		<script type="text/javascript">
+
+			// submit
+			$('.login-form').on('submit',function(e){
+
+				// prevent form from posting
+				e.preventDefault();
+
+				// get data
+				var em = $('input[name="em"]').val();
+				var ps = md5($('input[name="ps"]').val());
+
+				if (em !== '' || ps !== ""){
+
+					$.ajax({
+						url:'api/login.php',
+						type:'POST',
+						data:'login='+''+'&em='+em+'&ps='+ps,
+						success:function(obj){
+
+							// get the obj
+							if (obj){
+
+								// check password validity
+								if (obj.num == 1){
+
+									// check login status 
+									if (obj.status == '1'){
+
+										// set cookies
+              							setCookie('abbrev',obj.ab,365);
+              							setCookie('access',obj.access,365);
+              							setCookie('address',obj.address,365);
+              							setCookie('contact',obj.contact,365);
+              							setCookie('email',obj.email,365);
+              							setCookie('fullname',obj.fullname,365);
+              							setCookie('pharmacy',obj.pharmacy,365);
+              							setCookie('token',obj.tok,365);
+
+										// check access
+										if (obj.access == 0 ){
+
+											// navigation
+											window.location.replace("admin.html");
+
+										}
+
+										else if (obj.access == '1' || obj.access == '2'){
+
+											// navigation
+											window.location.replace("main.html");
+
+										}
+
+										$('.form-reponse').html(obj.res);
+
+										// go back to page 1
+										$('.p2').click();
+										$('.p1').click();
+
+										// clear all content
+										$('.addsupt tbody').html('');
+										$('.addprolist tbody').html('');
+										$('input[name="date"]').html('');
+										$('input[name="time"]').html('');
+
+										
+
+									} else if (obj.status == '0'){
+
+										$('.form-reponse').html(obj.res);
+
+									}
+
+								} 
+
+								else if (obj.num == 0){
+
+									$('.form-reponse').html(obj.res);
+
+								}
+							}
+
+						}
+					});
+				}
+			});	
+		</script>
+	</div>
+</body>
+</html>

@@ -1,0 +1,651 @@
+<!DOCTYPE html><head>
+		<meta charset="utf-8">
+		<meta name="description" content="">
+	 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	 	<script src="jquery/1.12.0/jquery.min.js"></script>
+	 	<link rel="stylesheet" href="bootstrap/3.3.6/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="css/font-awesome.css">
+		<link rel="shortcut icon" href="css/" type="image/x-icon">
+		<link rel="stylesheet" type="text/css" href="css/morris.css">
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+		<script type="text/javascript" src="js/md5/md5.min.js"></script>
+		<script src="bootstrap/3.3.6/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="js/raphael-2.1.0.min.js"></script>
+		<script type="text/javascript" src="js/morris.js"></script>
+		<!-- include cookie functions and logout function-->
+		<script type="text/javascript" src="js/main_function.js"></script>
+		<title>Prest Online v1.0.0</title>
+	</head>
+	<script type="text/javascript">
+		
+
+			  // 	auto suggest code
+									function suggest(inputString){
+
+										var qt = $('input[name="qty"]').val();
+
+										if(inputString.length == 0) {
+											$('#suggestions').fadeOut();
+											$('#country').hide();
+										} else {
+										    $('#country').show();
+											$('#country').addClass('load');
+
+											$.ajax({
+												type:'post',
+												url:'api/autosuggest.php',
+												data:'queryString='+inputString+'&qty='+qt+'&tok='+getCookie('token')+'&em='+getCookie('email'),
+												success:function(data){
+													// get json string
+													if (data.suggest){
+
+														//  empty container
+												        cont = '';               
+
+												       // append content to glob var
+												        for (var i in data.suggest){
+												          if(data.suggest.hasOwnProperty(i)){
+
+												          	 cont +='<a onclick="addPro('+data.suggest[i].id+',\''+data.suggest[i].product_name+'\',\''+data.suggest[i].qty+'\')"><p style="padding: 10px; width: auto;border:0.67px solid grey;border-radius: 3px;padding: 8px;margin:3px;color: black;">'+data.suggest[i].product_name+'</p></a>';
+												          	 
+
+												      	    }
+												      	}
+
+												      	// render html
+												      	$('#suggestions').fadeIn();
+														$('#suggestionsList').html(cont);
+														$('#country').removeClass('load');
+														$('#suggestionsList').css('height','330px;');
+
+													}
+
+													 if (data.suggest.length == 0) {
+														$('#suggestionsList').html('<a><p style="padding: 10px; width: auto;border:0.67px solid grey;border-radius: 3px;text-transform:uppercase;padding: 8px;margin:3px;color: black;"><b>'+inputString+'</b> cannot be found!!!</p></a>')
+													}
+
+												}
+											});
+										}
+									}
+
+									function fill(thisValue) {
+										$('#country').val(thisValue);
+										setTimeout("$('#suggestions').fadeOut();", 600);
+									}
+
+									// add products to request list function
+									function addPro(pid,pn,qty){
+										// hide select
+										$('#country').hide();
+										$('#suggestions').fadeOut();
+
+										if(qty !== ''){
+
+											$.ajax({
+												type:'post',
+												url:'api/addreqpro.php',
+												data:'add='+''+'&pid='+pid+'&qty='+qty+'&pn='+pn+'&tok='+getCookie('token')+'&em='+getCookie('email'),
+												success:function(data){
+
+													// get json string
+													if (data.pro){
+
+														//  empty container
+												        cont = '';               
+
+												       // append content to glob var
+												        for (var i in data.pro){
+												          if(data.pro.hasOwnProperty(i)){
+
+												          	var qty = data.pro[i].quantity;
+
+												          	if (qty == ''){
+												          		qty ='""';
+												          	}
+
+												          	 cont +='<tr>';
+												          	 cont +='<td>'+data.pro[i].no+'</td>';
+												          	 cont +='<td>'+data.pro[i].product_name+'</td>';
+												          	 cont +='<td>'+qty+'</td>';
+												          	 cont +='<td><a style="cursor: pointer;" onclick="delReq('+data.pro[i].id+')" class="btn btn-danger"><i class="fa fa-trash"></i> </a></td>';
+												          	 cont +='</tr>';
+
+												      	    }
+												      	}
+
+												      	// render html
+												      	$('.cus_body').html(cont);
+														// clear quantity input
+														$('input[name="qty"]').val('');
+														// clear product input
+														$('input[name="product"]').val('');
+
+													}
+												
+												}
+											});
+
+										} else {
+
+											alert("Enter quantity first!");
+
+										}	
+
+									}
+
+									// delete pro req 
+									function delReq(rid){
+
+										$.ajax({
+											type:'post',
+											url:'api/delreqpro.php',
+											data:'del='+''+'&rid='+rid+'&tok='+getCookie('token')+'&em='+getCookie('email'),
+											success:function(data){
+
+												// get json string
+													if (data.pro){
+
+														//  empty container
+												        cont = '';               
+
+												       // append content to glob var
+												        for (var i in data.pro){
+												          if(data.pro.hasOwnProperty(i)){
+
+												          	 cont +='<tr>';
+												          	 cont +='<td>'+data.pro[i].no+'</td>';
+												          	 cont +='<td>'+data.pro[i].product_name+'</td>';
+												          	 cont +='<td>'+data.pro[i].quantity+'</td>';
+												          	 cont +='<td><a style="cursor: pointer;" onclick="delReq('+data.pro[i].id+')" class="btn btn-danger"><i class="fa fa-trash"></i> </a></td>';
+												          	 cont +='</tr>';
+
+												      	    }
+												      	}
+
+												      	// render html
+												      	$('.cus_body').html(cont);
+													}
+												
+											}
+										});
+									}
+
+
+									// 	auto suggest code
+								function getSup(inputString){
+
+									if(inputString.length == 0) {
+										$('.suppliersli').fadeOut();
+									} else {
+										
+										$('#country').addClass('load');
+
+										$.ajax({
+											type:'post',
+											url:'api/getsuppliers.php',
+											data:'queryString='+inputString+'&tok='+getCookie('token')+'&em='+getCookie('email'),
+											success:function(data){
+
+												// get json string
+												if (data.getsup){
+
+													//  empty container
+											        cont = '';               
+
+											       // append content to glob var
+											        for (var i in data.getsup){
+											          if(data.getsup.hasOwnProperty(i)){
+
+											          		cont += '<a onclick="addSup('+data.getsup[i].id+',\''+data.getsup[i].supplier_name+'\','+data.getsup[i].r_id+')"><p style="padding: 10px; width: auto;border:0.67px solid grey;border-radius: 3px;padding: 8px;margin:3px;color: black;">'+data.getsup[i].supplier_name+'</p></a>';
+
+											        	}
+											     	 }
+
+											     	 // render html
+											     	 $('.Allsup').html(cont);
+											  	}
+
+											  	if (data.getsup.length == 0) {
+														$('.Allsup').html('<a><p style="padding: 10px; width: auto;border:0.67px solid grey;border-radius: 3px;text-transform:uppercase;padding: 8px;margin:3px;color: black;"><b>'+inputString+'</b> supplier cannot be found!!!</p></a>')
+												}
+
+												
+											}
+										});
+									}
+								}
+
+								function addSup(sid,sn,rid){
+									$('.suppliersli').fadeOut();
+									$('input[name="supplier"]').val('');
+									// alert(sid+' - '+sn);
+
+									$.ajax({
+										type:'post',
+										url:'api/addsup.php',
+										data:'sid='+sid+'&sn='+sn+'&rid='+rid+'&tok='+getCookie('token')+'&em='+getCookie('email'),
+										success:function(data){
+
+											// get json string
+												if (data.sup){
+
+													//  empty container
+											        cont = '';               
+
+											       // append content to glob var
+											        for (var i in data.sup){
+											          if(data.sup.hasOwnProperty(i)){
+
+											          	 cont +='<tr>';
+											          	 cont +='<td>'+data.sup[i].no+'</td>';
+											          	 cont +='<td>'+data.sup[i].supplier_name+'</td>';
+											          	 cont +='<td><a style="cursor: pointer;" onclick="delSup('+data.sup[i].s_id+')" class="btn btn-danger"><i class="fa fa-trash"></i> </a></td>';
+											          	 cont +='</tr>';
+
+											      	    }
+											      	}
+
+											      	// render html
+											      	$('#suptb tbody').html(cont);
+													
+												}
+
+										}
+									});
+								}
+
+								function delSup(sid){
+
+									$.ajax({
+										type:'post',
+										url:'api/delsup.php',
+										data:'sid='+sid+'&tok='+getCookie('token')+'&em='+getCookie('email'),
+										success:function(data){
+
+											// get json string
+												if (data.sup){
+
+													//  empty container
+											        cont = '';               
+
+											       // append content to glob var
+											        for (var i in data.sup){
+											          if(data.sup.hasOwnProperty(i)){
+
+											          	 cont +='<tr>';
+											          	 cont +='<td>'+data.sup[i].no+'</td>';
+											          	 cont +='<td>'+data.sup[i].supplier_name+'</td>';
+											          	 cont +='<td><a style="cursor: pointer;" onclick="delSup('+data.sup[i].s_id+')" class="btn btn-danger"><i class="fa fa-trash"></i> </a></td>';
+											          	 cont +='</tr>';
+
+											      	    }
+											      	}
+
+											      	// render html
+											      	$('#suptb tbody').html(cont);
+													
+												}
+										}
+									});
+								}
+
+								// get regions
+								function getRegions(){
+									$.ajax({
+										type:'post',
+										url:'api/get_regions.php',
+										data:'submit='+''+'&tok='+getCookie('token')+'&em='+getCookie('email'),
+										success:function(data){
+											// get json string
+												if (data.reg){
+
+													//  empty container
+											        cont = '';               
+
+											       // append content to glob var
+											        for (var i in data.reg){
+											          if(data.reg.hasOwnProperty(i)){
+
+											          	 cont +='<option value="'+data.reg[i].id+'">'+data.reg[i].region+'</option>';
+
+											      	    }
+											      	}
+
+											      	// render html
+											      	$('.region-cont').html(cont);
+													
+												}
+										}
+									});
+								}
+
+			  // check whether there is cookie session
+			  if (!getCookie('token')){
+			  		// navigation
+					window.location.replace("index.html");
+
+					
+			  }
+
+			  // call req poduct function
+			  addPro('0','','10');
+
+			  //  set time out
+			  setTimeout( function(){
+			  	 // call req suppliers funciton
+			  	 addSup('0','','');
+
+			  },800);
+			 
+
+			   // set time out
+			  setTimeout( function(){
+				  // call get suppliers function
+				  getSup('All');
+			  },1000);
+
+			  // set time out
+			  setTimeout( function(){
+				  // get regions
+				  getRegions();
+			  },1200);	
+			    
+			  
+
+			  // load side nav
+			  $(function(){
+			  	$('#main .side-cont').load('structure/side.html');
+			  });
+
+			  // modify user details
+			$(document).ready(function(){
+				$('.user-details').html('Pharmacy<i> :'+getCookie('pharmacy')+', User : '+getCookie('fullname')+'</i>');
+			});
+
+	</script>
+<body style="margin:auto;" id="main">
+	
+	<!-- side nave -->
+	<div class="side-cont">
+		
+	</div>
+
+	<div class="main-header" style="max-width: 350px;text-align: center;margin: auto;padding-top: 40px;">
+			<p style="font-size: 10px;text-align: right; margin-right: 0px;margin-bottom: -21px;">v1.0.0</p>
+			<h2 style="margin-bottom: 2px;">Prest Online - Create List</h2>
+			<p class="user-details" style="font-size: 12.5px;"></p>
+			<h5 class="sub_head" style="text-decoration: underline;">Create Product List</h5>
+		</div>
+	<div class="container" style="max-width: 650px;padding:30px; ">
+						<!-- page 1 -->
+						<div class="page_1">
+							<form method="post" style="padding-top: 20px;">
+							
+								<div class="form-group" style="display: inline-block;width: 30%;">
+									<!-- <label><i>Enter quantity</i></label> -->
+									<input  type="number" name="qty" style="text-transform:uppercase" placeholder="Enter quantity" class="form-control">
+									
+								</div>
+								<div class="form-group" style="display: inline-block;width: 68%;">
+									<!-- <label><i>Enter Product Name</i></label> -->
+									<input  type="text" name="product" style="text-transform:uppercase" onkeyup="suggest(this.value);" placeholder="Enter Product Name" class="form-control">
+									<img id="country" src="ajax-loader-grey.gif" style="display: none; float: right;margin-top:-27px; margin-right: 5px;height: 20px;width: 20px;" alt="upArrow" />
+								</div>
+								<div id="suggestions" class="suggestionsBox" style="display: none;height: 280px;width: 98%;overflow-y: scroll;overflow-x: hidden;">
+									<div id="suggestionsList" style="width: auto;" class="suggestionList"></div>
+								</div>
+								<div class="form-group">
+								</div>
+							</form>	
+
+							<!-- table -->
+							<div class="table-responsive" style="height: 320px;overflow-y: scroll;">
+							
+								<table class="table-striped table fixed_headers addprolist">
+									<thead  style="font-size: 13px;">
+										<tr style="font-style: italic;">
+											<th>No</th>
+											<th>Product</th>
+											<th>Quantity</th>
+											<th>Action</th>
+										</tr>
+									</thead>
+									<tbody class="cus_body" style="font-size: 13px;"></tbody>
+									</table>
+								</div>	
+								<div style="margin:auto;width: 50px; padding-top: 20px;">
+										<button class="btn btn-success next1">Next</button>
+								</div>
+							</div>
+							<!-- page 2 -->
+							<div class="page_2" style="display: none;padding: 20px;">
+								<div class="row">
+									<div class="col-sm-7">
+										<form method="post">
+							      			<div class="form-group">
+												<label><i>Supplier</i></label>
+												<input type="text" style="text-transform:uppercase" class="form-control" onkeyup="getSup(this.value)" name="supplier" class="supcov" placeholder="Enter Supplier Name">
+											</div>
+										</form>	
+										<!--<div class="suppliersli" style="display: none;height: 220px;overflow-y: scroll;">-->
+										<!--	<div class="supslist">-->
+												
+										<!--	</div>-->
+										<!--</div>-->
+										<div class="table-responsive" style="height: 320px;overflow-y: scroll;">
+											<table id="suptb" style="" class="table addsupt">
+												<thead>
+													<tr>
+														<th>No</th>
+														<th>Supplier</th>
+														<th>Action</th>
+													</tr>
+												</thead>
+												<tbody>
+																
+												</tbody>
+											</table>
+									    </div>
+									</div>
+									<div class="col-sm-5">
+									   <div class="">
+											<div class="form-group">
+												<label><i>Select Region</i></label>
+												<select name="region" class="form-control" style="text-transform:uppercase"> 
+													<option value="">Select  - All Suppliers</option>
+													<optgroup class="region-cont">
+														
+													</optgroup>
+												</select>
+											</div>
+										</div>
+										<script type="text/javascript">
+											// $(document).ready(function(){
+												$('select[name="region"]').on('change', function(){
+
+													var rid = $('select[name="region"]').val();
+
+													if (rid == ''){
+														rid = 0;
+													}
+
+													$.ajax({
+														type:'post',
+														url:'api/get_reg.php',
+														data:'submit='+''+'&rid='+rid+'&tok='+getCookie('token')+'&em='+getCookie('email'),
+														success:function(data){
+
+															// get json string
+															if (data.getsup){
+
+																//  empty container
+														        cont = '';               
+
+														       // append content to glob var
+														        for (var i in data.getsup){
+														          if(data.getsup.hasOwnProperty(i)){
+
+														          		cont += '<a onclick="addSup('+data.getsup[i].id+','+data.getsup[i].supplier_name+','+data.getsup[i].r_id+')"><p style="padding: 10px; width: auto;border:0.67px solid grey;border-radius: 3px;padding: 8px;margin:3px;color: black;">'+data.getsup[i].supplier_name+'</p></a>';
+
+														        	}
+														     	 }
+
+														     	 // render html
+														     	 $('.Allsup').html(cont);
+														  	}
+														}
+													});
+												});
+											// });
+										</script>
+										<div>
+											<i><b>All Suppliers</b></i>
+										</div>
+										<div class="Allsup" style="height: 370px;overflow-y: scroll;overflow-x: none;">
+											
+										</div>
+									</div>
+								</div>
+						      		
+								<div style="margin:auto;width: 150px; padding-top: 20px;">
+										<button class="btn btn-warning next1 p1">Previous</button>
+										<button class="btn btn-success next2">Next</button>
+								</div>
+							</div>	
+
+							<!-- page 3 -->
+							<div class="page_3" style="display: none;padding: 20px;">
+								<br>
+								<form method="">
+									<div class="form-group" style="width:49%;display: inline-block;">
+										<label>Date</label>
+										<input  type="date" name="date" placeholder="" class="form-control">
+									</div>
+									<div class="form-group" style="width:49%;display: inline-block;">
+										<label>Time</label>
+										<input  type="time" name="time" placeholder="" class="form-control">
+									</div>
+								</form>
+								<div style="margin:auto;width: 180px; padding-top: 20px;">
+										<button class="btn btn-warning next2 p2">Previous</button>
+										<button class="btn btn-success submit">Submit</button>
+								</div>
+							</div>
+
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+
+			// page 2
+			$('.next1').click(function(){
+
+				// check whether pro table is empty
+				var addplist = $('.addprolist tbody tr').length;
+
+				if (addplist == 0){
+					alert('Add products to list first');
+				} else if (addplist > 0) {
+
+					// hide page one
+					$('.page_1').slideToggle();
+
+					// show page two
+					$('.page_2').slideToggle();
+
+					// modify sub head
+					$('.sub_head').html('Select Suppliers');
+
+				}
+
+			});
+
+			// page 3
+			$('.next2').click(function(){
+
+				// check whether supplier table is  empty
+				var addsup = $('.addsupt tbody tr').length;
+
+				if (addsup == 0){
+					alert('Add Suppliers to list first');
+				} else if (addsup > 0){
+
+					// hide page one
+					$('.page_2').slideToggle();
+
+					// show page two
+					$('.page_3').slideToggle();
+
+					// modify sub head
+					$('.sub_head').html('Deadline for Response');
+				}	
+
+			});
+
+			// Previous page clicks
+			$('.p1').click(function(){
+
+				// modify sub head 
+				$('.sub_head').html('Create Product List');
+			});
+
+			$('.p2').click(function(){
+
+				// modify sub head 
+				$('.sub_head').html('Select Suppliers');
+			});
+
+			// submit
+			$('.submit').click(function(){
+
+				// get data
+				var dt = $('input[name="date"]').val();
+				var tm = $('input[name="time"]').val();
+
+				if (dt !== '' || tm !== ""){
+
+					$.ajax({
+						url:'submit_list.php',
+						type:'POST',
+						data:'submit='+''+'&dt='+dt+'&tm='+tm,
+						success:function(obj){
+
+							if (obj){
+
+								if (obj.status == '1'){
+
+									alert(obj.res);
+
+									// go back to page 1
+									$('.p2').click();
+									$('.p1').click();
+
+									// clear all content
+									$('.addsupt tbody').html('');
+									$('.addprolist tbody').html('');
+									$('input[name="date"]').html('');
+									$('input[name="time"]').html('');
+
+									
+
+								} else if (obj.status == '0'){
+
+									alert(obj.res);
+
+								}
+
+
+							}
+
+						}
+					});
+				} else {
+					alert("Enter date and time!");
+				}
+			});
+
+		});
+	</script>
+</body>
+</html>

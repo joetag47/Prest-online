@@ -1,0 +1,143 @@
+<div class="pull-right" style="margin-top: ;padding: 20px;" >
+		<a href="" onclick="Logout()" style="font-size: 16px;padding: 10px;"><i class="fa logout fa-sign-out"></i></a>
+	</div>
+	<!-- header -->
+	<div style="padding: 20px;padding-bottom: 0;" onclick="openNav()">
+		<a class="men" style="font-size: 16px;padding: 10px;cursor: pointer;"><i class="fa fa-bars"></i></a>
+	</div>
+	<!-- side nav -->
+	<div class="nav" id="nav">
+	
+		<div  id="mySidenav" class="sidenav">
+			<p href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</p>
+			<a href="http://www.prest-online.com/main.html"><i class="fa fa-home"></i> Home </a>
+			<hr>
+			<a href="http://www.prest-online.com/request.html"><i class="fa fa-list"></i> Requests </a>
+			<hr>
+			<span class="alert-sec"></span>
+			
+			<a href="http://www.prest-online.com/sett.html"><i class="fa fa-gear"></i> Settings </a>
+			<hr>
+		
+		</div>
+	
+	<style type="text/css">
+
+			 /* The side navigation menu */
+		.sidenav {
+		    height: 100%; /* 100% Full-height */
+		    width: 0; /* 0 width - change this with JavaScript */
+		    position: fixed; /* Stay in place */
+		    z-index: 1; /* Stay on top */
+		    top: 0;
+		    left: 0;
+		    background-color: rgba(240,240,240,0.4); /* Black*/
+		    overflow-x: hidden; /* Disable horizontal scroll */
+		    padding-top: 60px; /* Place content 60px from the top */
+		    transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+		}
+
+		/* The navigation menu links */
+		.sidenav a {
+		    padding: 6px 6px 6px 10px;
+		    text-decoration: none;
+		    font-size: 15px;
+		    color: #818181;
+		    display: block;
+		    /*margin-top: 5px;*/
+		    padding-left: 18px;
+		     font-family:calibri;
+		    transition: 0.3s
+
+		}
+
+		.sidenav a:first-child{
+			margin-top: 5px;
+		}
+
+		.sidenav > p {
+		    padding: 8px 8px 8px 15px;
+		    text-decoration: none;
+		    font-size: 12px;
+		    color: #818181;
+		    display: block;
+		    margin-top: 5px;
+		     font-family:signa;
+		     cursor: pointer;
+		    transition: 0.3s
+
+		}
+
+		/* Position and style the close button (top right corner) */
+		.sidenav .closebtn {
+		    position: absolute;
+		    top: 0;
+		    right: 25px;
+		    font-size: 36px;
+		    margin-left: 50px;
+		}
+
+
+		.foot{
+			/*position: relative;*/
+			bottom: 0;
+			background-color: black;
+			width: 250px;
+			padding: 5px;
+		}
+
+		.foot > p{
+			margin:0;
+			padding: 10px;
+			background-color: black;
+			font-size: 17.5px;
+			color: white;
+			text-align: center;
+			font-family: efes;
+		}
+		hr{
+			margin: 17px;
+		}
+
+
+		/* Style page content - use this if you want to push the page content to the right when you open the side navigation */
+		#main {
+		    transition: margin-left .5s;
+		    /*padding: 20px;*/
+		}
+
+		/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+		@media screen and (max-height: 450px) {
+		    .sidenav {padding-top: 15px;}
+		    .sidenav a {font-size: 18px;}
+		} 
+		</style>
+		<script type="text/javascript">
+			/* Set the width of the side navigation to 250px and the left margin of the page content to 250px */
+		function openNav() {
+		    document.getElementById("mySidenav").style.width = "200px";
+		    document.getElementById("main").style.marginLeft = "200px";
+		}
+
+		/* Set the width of the side navigation to 0 and the left margin of the page content to 0 */
+		function closeNav() {
+		    document.getElementById("mySidenav").style.width = "0";
+		    document.getElementById("main").style.marginLeft = "0";
+		} 
+
+		
+		// for retailer
+				  if (getCookie('access') == 1){
+
+				  	$('.alert-sec').html('<a href="http://www.prest-online.com/alert.html"><i class="fa fa-bell"></i> Alerts </a><hr>');
+
+				  } 
+				  // for wholesaler
+				  else if (getCookie('access') == 2){
+
+				  	$('.alert-sec').html('<a href="http://www.prest-online.com/pend_request.html"><i class="fa fa-list-ol"></i> Pending Requests </a><hr><a href="http://www.prest-online.com/create_alert.html"><i class="fa fa-bell"></i>Create Alerts </a><hr>');
+
+				  }
+
+		</script>
+	</div>	

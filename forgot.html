@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<head>
+	<meta charset="utf-8">
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<script src="jquery/1.12.0/jquery.min.js"></script>
+	<link rel="stylesheet" href="bootstrap/3.3.6/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/font-awesome.css">
+	<link rel="shortcut icon" href="css/" type="image/x-icon">
+	<link rel="stylesheet" type="text/css" href="css/morris.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<script type="text/javascript" src="js/md5/md5.min.js"></script>
+	<script src="bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="js/raphael-2.1.0.min.js"></script>
+	<script type="text/javascript" src="js/morris.js"></script>
+	<title>Prest Online v1.0.0</title>
+</head>
+<body style="margin:auto;">
+	<div class="for-header" style="width: 300px;text-align: center;margin: auto;padding-top: 30px;">
+		<h2 style="margin-bottom: 2px;">Reset Password</h2>
+		<p style="font-size: 12.5px;"><i> enter details below.</i></p>
+	</div>
+	<div class="container" style="padding: 50px;padding-top: 30px;max-width: 650px;">
+		<!-- Registration -->
+		<form class="forgot-form" method="post">
+			<div class="form-response"></div>
+			<!-- forms -->
+			<label><i>Company</i></label>
+			<div class="form-group">
+				<input type="email" class="form-control" name="em" placeholder="Enter Email" required>
+			</div>
+			<p style="font-size: 13.5px;"> 
+				NB : a password reset link will be sent to your email. Kindly follow the instructions to reset your password.
+			</p>
+			<br>
+			<div class="form-group">
+				<input type="submit" class="form-control btn btn-success" name="Submit" value="Submit">
+			</div>
+		</form>
+	</div>
+	<script type="text/javascript">
+		
+				$(document).ready(function(){
+
+					// form on submit 
+					$('.forgot-form').on('submit',function(e){
+
+						// prevent form from posting
+						e.preventDefault(); 
+
+							var em = $('input[name="em"]').val();
+
+							// validate passwords
+							if (em == ''){
+								
+								alert("Kindly enter Email");
+
+							} else {
+
+								var em = $('input[name="em"]').val();
+
+								// post form
+								$.ajax({
+									type:'post',
+									url:'api/forgot_pass.php',
+									data:'submit='+''+'&em='+em,
+									success:function(data){
+
+										if (data){
+
+											$('.form-response').html(data.res);
+
+											if (data.status == 1){
+												// clear form
+												$('.regis-form input[name]').val('');
+												$('.regis-form select[name]').val('');
+											}
+										}
+
+									}
+								});	
+							}
+
+						});
+
+					});
+	</script>
+</body>
+</html>

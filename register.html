@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<head>
+		<meta charset="utf-8">
+		<meta name="description" content="">
+	 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	 	<script src="jquery/1.12.0/jquery.min.js"></script>
+	 	<link rel="stylesheet" href="bootstrap/3.3.6/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="css/font-awesome.css">
+		<link rel="shortcut icon" href="css/" type="image/x-icon">
+		<link rel="stylesheet" type="text/css" href="css/morris.css">
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+		<script type="text/javascript" src="js/md5/md5.min.js"></script>
+		<script src="bootstrap/3.3.6/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="js/raphael-2.1.0.min.js"></script>
+		<script type="text/javascript" src="js/morris.js"></script>
+		<title>Prest Online v1.0.0</title>
+	</head>
+<body style="margin:auto;">
+	<div class="regis-header" style="width: 300px;text-align: center;margin: auto;padding-top: 30px;">
+		<h2 style="margin-bottom: 2px;">Registration</h2>
+		<p style="font-size: 12.5px;"><i> enter details below.</i></p>
+	</div>
+	<script type="text/javascript">
+				// get regions
+								function getRegions(){
+									$.ajax({
+										type:'post',
+										url:'api/get_regions.php',
+										data:'submit='+'',
+										success:function(data){
+											// get json string
+												if (data.reg){
+
+													//  empty container
+											        cont = '';               
+
+											       // append content to glob var
+											        for (var i in data.reg){
+											          if(data.reg.hasOwnProperty(i)){
+
+											          	 cont +='<option value="'+data.reg[i].id+'">'+data.reg[i].region+'</option>';
+
+											      	    }
+											      	}
+
+											      	// render html
+											      	$('.region-cont').html(cont);
+													
+												}
+										}
+									});
+								}
+
+								// call get regions 
+								getRegions();
+
+			</script>
+	<div class="container" style="padding: 50px;padding-top: 30px;max-width: 650px;">
+		<!-- Registration -->
+		<a href="index.html" class="btn btn-default"> <i class="fa fa-chevron-left"></i></a><br><br>
+		<form class="regis-form" method="post">
+			<style type="text/css">
+				.form-font{
+					text-transform: uppercase;
+				}
+			</style>
+			<div class="form-response">
+				
+			</div>
+			
+			<label><i>Personal</i></label>
+			<div class="form-group">
+				<input type="text" class="form-control form-font" name="fn" placeholder="Enter Fullname" required>
+			</div>
+			<label><i>Company</i></label>
+			<div class="form-group">
+				<input type="text" style="width:54%;display:inline-block;" class="form-control form-font" name="ph" placeholder="Enter Name" required>
+				<input type="text" style="width:44%;display:inline-block;" class="form-control form-font" name="ab" placeholder="Enter Abbrevation " required>
+			</div>
+			<div class="form-group">
+				<input type="tel" style="width:54%;display:inline-block;" class="form-control form-font" name="cn" placeholder="Enter Contact" required>
+				<input type="email"  style="width:44%;display:inline-block;" class="form-control form-font" name="em" placeholder="Enter Email" required>
+			</div>
+	    	<div class="form-group">
+				<select type="text" class="form-control form-font" name="ty" required>
+				    <option value="">Select Business type</option>
+				    <option value="1">Retail</option>
+				    <option value="2">Wholesale</option>
+				</select>    
+			</div>	    
+			<div class="form-group">
+				<input type="text" class="form-control form-font" name="add" placeholder="Enter Address (optional)">
+			</div>
+			<div class="form-group">
+				<select type="text" class="form-control form-font" name="reg" required>
+				    <option value="">Select Region</option>
+				   <optgroup class="region-cont"></optgroup>
+				</select>    
+			</div>   
+			<label><i>Security</i></label>
+			<div class="form-group">
+				<input type="password" class="form-control" minlength="8" name="ps" placeholder="ENTER PASSWORD" required>
+			</div>
+			<div class="form-group">
+				<input type="password" class="form-control" name="rps" onkeyup="Check()" placeholder="ENTER PASSWORD AGAIN" required>
+				<div class="res"></div>
+			</div>
+			<!-- terms -->
+			<div class="form-group" style="font-size: 12px;">
+				<input type="checkbox" name="agree" required>
+				Agree to <a href="terms">Terms and Conditions</a>
+			</div>
+			<br>
+			<div class="form-group">
+				<input type="submit" class="form-control btn btn-success" name="register" value="Submit">
+			</div>
+		</form>
+	</div>
+	<script type="text/javascript">
+		
+		
+
+			function Check(){
+					
+					// check 
+					$(document).ready(function(){
+
+						// get values into var
+						var pass = $('input[name="ps"]').val();
+						var upass = $('input[name="rps"]').val();
+
+						// validate passwords
+						if (pass !== upass){
+							$('.res').html("<p style='color:red;padding:10px;font-size:12px;'><i>Passwords do not match !!!</i></p>");
+										
+							// e.preventDefault();
+
+						} else {
+
+							$('.res').html('');
+
+						}
+					});
+				}
+				
+
+				$(document).ready(function(){
+
+					// form on submit 
+					$('.regis-form').on('submit',function(e){
+
+						// prevent form from posting
+						e.preventDefault(); 
+
+						// get values into var
+						var pass = $('input[name="ps"]').val();
+						var upass = $('input[name="rps"]').val();
+
+							// validate passwords
+							if (pass !== upass){
+								alert("Passwords do not match !!!");
+
+							} else {
+
+								// return true;
+
+								var fn = $('input[name="fn"]').val();
+								var ph = $('input[name="ph"]').val();
+								var ab = $('input[name="ab"]').val();
+								var cn = $('input[name="cn"]').val();
+								var em = $('input[name="em"]').val();
+								var ty = $('select[name="ty"]').val();
+								var add = $('input[name="add"]').val();
+								var reg = $('select[name="reg"]').val();
+								var ps = md5($('input[name="ps"]').val());
+
+								// post form
+								$.ajax({
+									type:'post',
+									url:'api/register.php',
+									data:'register='+''+'&fn='+fn+'&ph='+ph+'&ab='+ab+'&cn='+cn+'&em='+em+'&ty='+ty+'&add='+add+'&reg='+reg+'&ps='+ps,
+									success:function(data){
+
+										if (data){
+
+											$('.form-response').html(data.res);
+
+											if (data.status == 1){
+												// clear form
+												$('.regis-form input[name]').val('');
+												$('.regis-form select[name]').val('');
+											}
+										}
+
+									}
+								});	
+							}
+
+						});
+
+					});
+
+			</script>
+</body>
+</html>

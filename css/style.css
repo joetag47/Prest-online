@@ -1,0 +1,171 @@
+/* Styles for Smart Pharma*/
+
+/*index*/
+ div.login-con {
+	width:500px;
+	height: 450px;
+	background-color: white;
+	padding: 40px;
+	margin:auto;
+	margin-top: 120px;
+	border-radius: 10px;
+}
+
+ div.login-con h2{
+ 	text-align: center;
+ }
+
+  div.login-con p{
+  	text-align: center;
+  	font-size: 15px;
+  }
+
+  p:first-child{
+  	color: grey;
+  }
+/*
+form.login-form{
+	padding: 15px;
+	width:80%;
+	margin:auto;
+	padding-top: 30px;
+}*/
+
+div.form-group input[name]{
+	font-size: 13px;
+	box-shadow: none;
+	border-bottom: 1.56px solid grey;
+}
+
+div.form-group input[name]:focus{
+	border-color: #5cb85c;
+	border-bottom-color: black;
+}
+
+div.form-group select{
+	font-size: 13px;
+	box-shadow: none;
+}
+
+div.login-con p.foot{
+	font-size:13px;
+	color: grey;
+}
+
+label {
+	font-size: 13px;
+}
+/*nav*/
+.sidenav-top {
+	padding: 25px;
+	background-color: rgba(0,0,0,0.75);
+	height: auto;
+	margin-bottom: 30px;
+	border-right: 10px solid grey;
+	border-left: 10px solid grey;
+	border-bottom-right-radius: 15px;
+	border-bottom-left-radius: 15px;
+}
+
+.sidenav-top h4{
+	text-align: center;
+	color: white;
+}
+
+.sidenav-top p{
+	text-align: center;
+	color: white;
+}
+
+ul.men {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 15%;
+    background-color: #f1f1f1;
+    position: fixed;
+    height: 100%;
+    overflow: auto;
+}
+
+a{
+	text-decoration: none;
+}
+
+.men li a {
+    display: block;
+    color: #000;
+    padding: 8px 0 8px 16px;
+    text-decoration: none;
+    font-size: 13.5px;
+}
+
+a:hover{
+    text-decoration: none;
+    color:black;
+}
+
+/*li a.active {
+    background-color:  #555;
+    color: white;
+}*/
+
+.men li a:hover:not(.active) {
+    background-color: rgba(200,200,200,0.8);
+    /*border:solid 1.80px  #555;*/
+    border-left: solid 4px  #555;
+    /*color: white;*/
+     text-decoration: none;
+     margin-left: 12px;
+     transition: 0.7s;
+     font-weight: 400;
+}
+
+.men li a i {
+	margin-right: 10px;
+}
+
+/*table*/
+.panel-body{
+	/*height: 300px;*/
+}
+
+.table-responsive{
+	height: 280px;
+}
+
+table {
+	height: 280px;
+	overflow-y: auto;
+}
+
+
+/*styles for top nav*/
+
+.top-nav{
+	margin-left: 15%;
+	background-color: rgba(230,230,230,1);
+	height: 55px;
+	padding: 10px;
+	width: auto;
+}
+
+.top-nav > .search-cover{
+	width: 250px;
+}
+
+.top-nav > div.pull-right{
+	padding:5px; 
+}
+
+.top-nav > div > a{
+	color: grey;
+}
+
+.foot{
+	bottom: 0;
+	position: fixed;
+	margin: auto;
+	margin-bottom: 30px;
+	width: 100%;
+}

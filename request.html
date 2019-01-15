@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<head>
+	<meta charset="utf-8">
+		<meta name="description" content="">
+	 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	 	<script src="jquery/1.12.0/jquery.min.js"></script>
+	 	<link rel="stylesheet" href="bootstrap/3.3.6/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="css/font-awesome.css">
+		<link rel="shortcut icon" href="css/" type="image/x-icon">
+		<link rel="stylesheet" type="text/css" href="css/morris.css">
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+		<script type="text/javascript" src="js/md5/md5.min.js"></script>
+		<script src="bootstrap/3.3.6/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="js/raphael-2.1.0.min.js"></script>
+		<script type="text/javascript" src="js/morris.js"></script>
+		<!-- include cookie functions and logout function-->
+		<script type="text/javascript" src="js/main_function.js"></script>
+		<!-- include get request function for request page -->
+		<script type="text/javascript" src="js/get_reqs.js"></script>
+		<title>Prest Online v1.0.0</title>
+</head>
+<script type="text/javascript">
+
+ 	// check whether there is cookie session
+	if (!getCookie('token')){
+			  		// navigation
+		window.location.replace("index.html");
+
+					
+	}
+	
+	// viewmore func
+			function viewRef(ref){
+
+				if (ref !== ''){
+
+					$('.page_1').slideToggle();
+
+					$.ajax({
+						url:'api/view_more.php',
+						type:'POST',
+						data:'submit='+''+'&ref='+ref+'&tok='+getCookie('token')+'&em='+getCookie('email'),
+						success:function(data){
+
+							// get json string
+							if (data.vmore){
+
+								//  empty container
+								cont = '';               
+
+							   // append content to glob var
+							    for (var i in data.vmore){
+							      if(data.vmore.hasOwnProperty(i)){
+
+							      	 cont +='<tr>';
+							      	 cont +='<td>'+data.vmore[i].no+'</td>';
+							      	 cont +='<td>'+data.vmore[i].ref+'</td>';
+							      	 cont +='<td>'+data.vmore[i].pn+'</td>';
+							      	 cont +='<td>'+data.vmore[i].qty+'</td>';
+							      	 cont +='</tr>';
+
+			 						}
+						     	   		 
+						     	}
+
+					 			$('.ref_body').html(cont);
+								$('.viewref').slideToggle();
+																
+							}
+						}
+					}); 
+				}
+			}
+
+			function viewsup(ref){
+
+				if (ref !== ''){
+
+					$('.page_1').slideToggle();
+
+					$.ajax({
+						url:'api/view_sup.php',
+						type:'POST',
+						data:'submit='+''+'&ref='+ref+'&tok='+getCookie('token')+'&em='+getCookie('email'),
+						success:function(data){
+
+							// get json string
+							if (data.vsup){
+
+								//  empty container
+								cont = '';               
+
+							   // append content to glob var
+							    for (var i in data.vsup){
+							      if(data.vsup.hasOwnProperty(i)){
+
+							      	 cont +='<tr>';
+							      	 cont +='<td>'+data.vsup[i].no+'</td>';
+							      	 cont +='<td>'+data.vsup[i].ref+'</td>';
+							      	 cont +='<td>'+data.vsup[i].sp+'</td>';
+							      	 cont +='<td>'+data.vsup[i].status+'</td>';
+
+							      	 cont +='<td>';
+
+							      	 	// if req sup has responded
+							      	 	if (data.vsup[i].status == 1){
+							      	 		cont +='<a class="btn btn-success" title="price list" onclick="viewPL(\''+data.vsup[i].ref+'\','+data.vsup[i].sid+')"> <i class="fa fa-list"></i></a>';
+							      	 	}
+
+							      	 cont +='</td>';
+
+							      	 cont +='</tr>';
+
+			 						}
+						     	   		 
+						     	}
+
+						     	// render html
+					 			$('.sup_body').html(cont);
+								$('.viewsup').slideToggle();
+																
+							}
+							
+						}
+					}); 
+				}
+			}
+
+			function viewstat(ref,get){
+
+				if (ref !== ''){
+				    
+				    $('.lst_prnt_con').html('<a class="btn btn-danger pull-right lst_prnt" style="display:none;" target="blank_" title="print" href="gen_report.php?ref='+ref+'"> <i class="fa fa-print"></i></a>');
+
+					$('.page_1').slideToggle();
+
+					$.ajax({
+						url:'api/view_stat.php',
+						type:'POST',
+						data:'submit='+''+'&ref='+ref+'&get='+get+'&tok='+getCookie('token')+'&em='+getCookie('email'),
+						success:function(data){
+
+							// get json string
+							if (data.vsat_col){
+
+								//  empty container
+								cont = '';   
+
+								// for column view
+								cont += '<div class="col_stat">'
+
+							   // append content to glob var
+							    for (var i in data.vsat_col){
+							      if(data.vsat_col.hasOwnProperty(i)){
+
+							      	// render column
+							      	cont +='<div class="col-sm-6" id="'+data.vsat_col[i].sid+'col">\
+												<div class="panel panel-default">\
+													<div class="panel-heading" style="height: 110px;">\
+														<div class="pull-right">\
+															<a class="btn btn-warning" id="'+data.vsat_col[i].sid+'pbut" title="purchase" style="padding:8px;"> <i class="fa fa-tags"></i></a>\
+															<a class="btn btn-danger" target="blank_" title="print" href="gen_report.php?ref='+data.vsat_col[i].ref+'&sid='+data.vsat_col[i].sid+'"> <i class="fa fa-print"></i></a>\
+														</div>\
+														<span style="display: inline-block;"><i>Supplier :</i></span> <h4>'+data.vsat_col[i].sn+'</h4>\
+													</div>\
+													<div class="panel-body" style="height: 200px;overflow-y: auto;">\
+														<table class="table" id="'+data.vsat_col[i].sid+'tbx" style="height: auto;">\
+															<thead>\
+																<tr>\
+																	<td><i><b>No</b></i></td>\
+																	<td><i><b>Product</b></i></td>\
+																	<td><i><b>Cost (Gh<i>&#8373</i>)</b></i></td>\
+																	<td><i><b>Qty</b></i></td>\
+																	<td><i><b>Total Qty</b></i></td>\
+																</tr>\
+															</thead>\
+															<tbody style="height: auto;">';
+
+															// for products
+															// append content to glob var
+														    for (var p in data.vsat_col[i].pro){
+														      if(data.vsat_col[i].pro.hasOwnProperty(p)){
+
+														      	cont += '<tr>';
+														      	cont += '<td>'+data.vsat_col[i].pro[p].no+'</td>';
+														      	cont += '<td>'+data.vsat_col[i].pro[p].pnm+'</td>';
+														      	cont += '<td>'+data.vsat_col[i].pro[p].cost+'</td>';
+														      	cont += '<td>'+data.vsat_col[i].pro[p].qty+'</td>';
+														      	cont += '<td>'+data.vsat_col[i].pro[p].estq+'</td>';
+														      	cont += '</tr>';
+
+														      }
+														    } 
+
+														    cont += '<tr>\
+														    			<td><i><b>Total</b></i></td>\
+														    			<td></td>\
+														    			<td></td>\
+														    			<td></td>\
+														    			<td>'+data.vsat_col[i].totar+'</td>\
+														    		</tr>';
+
+															cont += '</tbody>\
+														 </table>\
+													</div>\
+												</div>\
+											</div>'; 		
+									
+									}
+						     	   		 
+						     	}
+
+						     	cont += '</div>';
+
+						     	// for list view
+						     	cont += '<div class="table-responsive list_stat" style="height: 320px;overflow-y: scroll;display:none;">';
+
+						     	cont += '<table class="table-striped table fixed_headers" style="height: auto;">\
+												<thead style="font-size: 13px;">\
+													<tr style="font-style: italic;">\
+														<th>No</th>\
+														<th>Product</th>\
+														<th>Cost (Gh<i>&#8373</i>)</th>\
+														<th>Qty</th>\
+														<th>Total Qty </th>\
+														<th>Supplier </th>\
+													</tr>\
+												</thead>\
+												<tbody class=""  style="font-size: 13px;height: auto;"';
+
+												lcon = '';
+
+								     		// append content to glob var
+										    for (var i in data.vsat_list){
+										      if(data.vsat_list.hasOwnProperty(i)){
+
+													lcon += '<tr>\
+																<td>'+data.vsat_list[i].no1+'</td>\
+																<td>'+data.vsat_list[i].pnm+'</td>\
+																<td>'+data.vsat_list[i].cost+'</td>\
+																<td>'+data.vsat_list[i].qty+'</td>\
+																<td>'+data.vsat_list[i].estq+'</td>\
+																<td>'+data.vsat_list[i].sn+'</td>\
+															</tr>';
+													
+										      }
+										    } 
+
+										  cont += lcon;  
+
+							    cont += '</tbody>\
+										<table>';
+
+						     	cont += '</div>';
+
+						     	// render html
+					 			$('.stat_body').html(cont);
+								$('.viewstat').slideToggle();
+																
+							}
+
+
+
+							// if (obj){
+
+							// 	$('.stat_body').html(obj);
+							// 	$('.viewstat').slideToggle();
+
+							// }
+							
+							if (get == '0'){
+							    $('.vst_b').click(function(){
+							        window.location.reload();
+							    });
+							}
+						}
+					}); 
+				}
+			}
+
+			function viewPL(ref,sid){
+
+				if (ref !== '' || sid !== ''){
+
+					$('.viewsup').slideToggle();
+
+					$.ajax({
+						url:'api/view_price_list.php',
+						type:'POST',
+						data:'submit='+''+'&ref='+ref+'&sid='+sid+'&tok='+getCookie('token')+'&em='+getCookie('email'),
+						success:function(data){
+
+							// get json string
+							if (data.vplist){
+
+								//  empty container
+								cont = '';               
+
+							   // append content to glob var
+							    for (var i in data.vplist){
+							      if(data.vplist.hasOwnProperty(i)){
+
+							      	 cont +='<tr>';
+							      	 cont +='<td>'+data.vplist[i].no+'</td>';
+							      	 cont +='<td>'+data.vplist[i].ref+'</td>';
+							      	 cont +='<td>'+data.vplist[i].pn+'</td>';
+							      	 cont +='<td>'+data.vplist[i].sp+'</td>';
+							      	 cont +='<td>'+data.vplist[i].cost+'</td>';
+							      	 cont +='<td>'+data.vplist[i].qty+'</td>';
+							      	 cont +='</tr>';
+
+			 						}
+						     	   		 
+						     	}
+
+						     	// render html
+					 			$('.pr_body').html(cont);
+								$('.viewpl').slideToggle();
+																
+							}
+						}
+					}); 
+				}
+
+			}
+			
+			 // timing func   
+			function timC(dl,no,rst,rs){
+
+				// dl : dealine
+				// no : request no
+				// rst : requested supplier status
+				// rs : rrequested supplier
+
+				// get today
+			   var now=new Date();
+			   // get dealline
+			   var dln = new Date(dl);
+			   // compare date first : if dl is up
+			   if (((dln <= now) && (dln.getTime() <= now.getTime())) ){
+			   		// alert('goood day');
+			   		// console.log('goood day')
+			   		
+			   		$('#vst_lnk'+no+'').show();
+			   } 
+			   // if deadline is not up 
+			   else {
+			       
+			       console.log(no+'req:'+rst);
+			       console.log(no+'ac:'+rs);
+			   	    
+			   	    // check 
+			   		if (rst == rs){
+			   			// if tme is not up but all suppliers have responded
+			   			$('#vst_lnk'+no+'').show();
+			   			
+			   		} else if (rst < rs) {
+
+				   		// get the time differences
+				   		var diff = dln.getTime() - now.getTime();
+
+				   		console.log(diff);
+				   		console.log(no);
+				   		
+				   	    // display force gen rep but
+				   	    $('#frc_lnk'+no+'').show();
+
+				   		// set timeout with that difference
+				   		setTimeout(ReL, diff);
+				                	
+				        // Reload when the time is up 
+				        function ReL(){
+				           window.location.reload();
+				        } 
+			        } 
+			   	
+			   }
+			}
+
+			// load side nav
+			  $(function(){
+			  	$('#main .side-cont').load('structure/side.html');
+			  });
+
+			  // modify user details
+			$(document).ready(function(){
+				$('.user-details').html('Pharmacy<i> :'+getCookie('pharmacy')+', User : '+getCookie('fullname')+'</i>');
+			});
+
+
+			// call get request function from get_req.js
+			getReq();
+
+</script>
+<body style="margin:auto;" id="main">
+	<!-- side nave -->
+	<div class="side-cont">
+		
+	</div>
+	<div class="main-header" style="max-width: 350px;text-align: center;margin: auto;padding-top: 40px;">
+			<p style="font-size: 10px;text-align: right; margin-right: 0px;margin-bottom: -21px;">v1.0.0</p>
+			<h2 style="margin-bottom: 2px;">Prest Online - Requests</h2>
+			<p class="user-details" style="font-size: 12.5px;"></i></p>
+			<h5 class="sub_head" style="text-decoration: underline;">View Requests</h5>
+		</div>
+		<script type="text/javascript">
+		// $(document).ready(function(){
+
+			
+			
+		// });
+	</script>
+	<div class="container" style="max-width: 650px;padding:30px; ">
+						<div class="page_1">
+							<!-- table -->
+							<div class="table-responsive" style="height: 320px;overflow-y: scroll;">
+							
+								<table class="table-striped table fixed_headers">
+									<thead  style="font-size: 13px;">
+										<tr style="font-style: italic;">
+											<!--<th>No</th>-->
+											<th>Ref</th>
+											<th>Products</th>
+											<th>Deadline</th>
+											<th>Time</th>
+											<th>Confirm</th>
+											<th>Action</th>
+										</tr>
+									</thead>
+									<tbody class="cus_body"  style="font-size: 13px;">
+										
+										
+									</tbody>
+									</table>
+								</div>	
+								<!-- <div style="margin:auto;width: 50px; padding-top: 20px;">
+										<button class="btn btn-success next1">Next</button>
+								</div> -->
+							</div>
+							<div class="viewref" style="display: none;">
+								<!-- table -->
+								<a class="vref_b btn btn-default"> <i class="fa fa-chevron-left"></i></a>
+								<div class="table-responsive" style="height: 320px;overflow-y: scroll;">
+									
+									<table class="table-striped table fixed_headers">
+										<thead  style="font-size: 13px;">
+											<tr style="font-style: italic;">
+												<th>No</th>
+												<th>Ref</th>
+												<th>Product name</th>
+												<th>Qty</th>
+											</tr>
+										</thead>
+										<tbody class="ref_body"  style="font-size: 13px;">
+										</tbody>
+									</table>
+								</div>	
+								<script type="text/javascript">
+									$(document).ready(function(){
+										$('.vref_b').click(function(){
+											$('.page_1').slideToggle();
+											$('.viewref').slideToggle();
+										});
+									});
+								</script>
+							</div>	
+
+							<div class="viewsup" style="display: none;">
+								<!-- table -->
+								<a class="vsup_b btn btn-default"> <i class="fa fa-chevron-left"></i></a>
+								<div class="table-responsive" style="height: 320px;overflow-y: scroll;">
+									
+									<table class="table-striped table fixed_headers">
+										<thead  style="font-size: 13px;">
+											<tr style="font-style: italic;">
+												<th>No</th>
+												<th>Ref</th>
+												<th>Supplier </th>
+												<th>Status</th>
+												<th>Action</th>
+											</tr>
+										</thead>
+										<tbody class="sup_body"  style="font-size: 13px;">
+										</tbody>
+									</table>
+								</div>	
+								<script type="text/javascript">
+									$(document).ready(function(){
+										$('.vsup_b').click(function(){
+											$('.viewsup').slideToggle();
+											$('.page_1').slideToggle();
+										});
+									});
+								</script>
+							</div>	
+
+							<div class="viewpl" style="display: none;">
+
+									<a class="vpl_b btn btn-default"> <i class="fa fa-chevron-left"></i></a>
+									<div class="table-responsive" style="height: 320px;overflow-y: scroll;">
+									
+									<table class="table-striped table fixed_headers">
+										<thead  style="font-size: 13px;">
+											<tr style="font-style: italic;">
+												<th>No</th>
+												<th>Ref</th>
+												<th>Product Name </th>
+												<th>Supplier </th>
+												<th>Cost</th>
+												<th>Qty</th>
+											</tr>
+										</thead>
+										<tbody class="pr_body"  style="font-size: 13px;">
+										</tbody>
+									</table>
+									<script type="text/javascript">
+									$(document).ready(function(){
+										$('.vpl_b').click(function(){
+											$('.viewsup').slideToggle();
+											$('.viewpl').slideToggle();
+										});
+									});
+								</script>
+								</div>
+							</div>	
+
+							<div class="viewstat" style="display: none;">
+								<!-- table -->
+								
+								<div class="lst_prnt_con"></div>
+								<div class="pull-right btn btn-default list_view" style="margin-right:7px;">List view</div>
+								<a class="vst_b btn btn-default"> <i class="fa fa-chevron-left"></i></a><br>
+								<div class="row stat_body" style="margin-top:10px;">
+									
+								</div>
+							
+								<script type="text/javascript">
+									$(document).ready(function(){
+										$('.vst_b').click(function(){
+											$('.viewstat').slideToggle();
+											$('.page_1').slideToggle();
+										});
+										
+									
+									});
+									
+										$('.list_view').click(function(){
+										    $('.col_stat').slideToggle();
+										    $('.list_stat').slideToggle();
+										    $('.lst_prnt').slideToggle();
+										});
+								</script>
+							</div>	
+
+	</div>
+	
+</body>
+</html>
